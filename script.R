@@ -12,7 +12,7 @@ library(cobalt)
 library(survey)
 library(pscl)
 
-raw <- readxl::read_excel("C:/Users/kkw10/OneDrive/바탕 화면/강우/공부/논문/pf한현진 SURPASS DWI/data/Final_1.1.1age.xlsx") |> janitor::clean_names()
+raw <- readxl::read_excel("Final_1.1.1age.xlsx") |> janitor::clean_names()
 
 names(raw)
 raw <- raw %>%
