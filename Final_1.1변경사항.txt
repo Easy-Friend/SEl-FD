@@ -1,0 +1,21 @@
+sex F M 수정함
+procedure time *24*60 으로 분 처리 해서 값 변환
+BMI >= 25라면 0으로, 그 외는 1로
+antithrombotics_prev에서 0과 1로
+*pru 부분을 삭제, antiPLT_resistance>=220은 0, 그 외는 1로 변환
+An location에서 anterior은 1로, posterior은 0
+An morphology에서 saccular은 1, 그 외는 0으로 
+An_width에서 괄호 있는 것 삭제
+width 10기준으로 이상이면 0, 아니면 1
+aspect, dome_neckd에서 #DIV/0! 을 삭제 
+multiple stent에서 stent length와 diameter는 더 큰 것을 기준으로
+stent 갯수 1개는 1, 그 외는 0
+immediate 1인 애들은 갯수 0으로 채워 넣음
+dwi observer 2를 1로 합침 우선
+group에서 evolve는 0, elite는 1로
+*ais_hx와 sah_hx를 하나로 - if ais or sah = 0, 0, 1 해서 CVA Hx로 column 이름 명명
+
+
+
+
+
