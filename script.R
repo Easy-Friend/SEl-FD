@@ -337,7 +337,7 @@ one_row <- function(df, var, bal_obj) {
       `group 0 (before)` = n0_b,
       `group 1 (before)` = n1_b,
       `SMD (before)`     = round(smd_b, 3),
-      `group 0 (after)`  = round(n0_a, 1),  # 가중 event "수" (소수점 발생 가능)
+      `group 0 (after)`  = round(n0_a, 1), 
       `group 1 (after)`  = round(n1_a, 1),
       `SMD (after)`      = round(smd_a, 3)
     )
@@ -358,24 +358,22 @@ inc_g1  <- 100 * inc_by$immediate_dwi[inc_by$group == 1]
 cnt_g0  <-      mean_by$dwi_count     [mean_by$group == 0]
 cnt_g1  <-      mean_by$dwi_count     [mean_by$group == 1]
 
-## 2) 효과크기(OR/RR), 95% CI, p-value 추출
-# (a) IPTW-Logistic (quasibinomial): OR
+# IPTW-Logistic (quasibinomial): OR
 b_lr   <- coef(fit_lr)["group"]
-ci_lr  <- confint(fit_lr)["group", ]             # 로그 오즈 스케일
+ci_lr  <- confint(fit_lr)["group", ]    
 OR     <-  exp(b_lr)
 OR_lo  <-  exp(ci_lr[1])
 OR_hi  <-  exp(ci_lr[2])
 p_lr   <- summary(fit_lr)$coefficients["group", "Pr(>|t|)"]
 
-# (b) IPTW-Quasi-Poisson: RR
+# IPTW-Quasi-Poisson: RR
 b_qp   <- coef(fit_qp)["group"]
-ci_qp  <- confint(fit_qp)["group", ]             # 로그 rate 스케일
+ci_qp  <- confint(fit_qp)["group", ]    
 RR     <-  exp(b_qp)
 RR_lo  <-  exp(ci_qp[1])
 RR_hi  <-  exp(ci_qp[2])
 p_qp   <- summary(fit_qp)$coefficients["group", "Pr(>|t|)"]
 
-## 3) 표 생성 (요청 포맷)
 table2 <- tribble(
   ~result,                    ~`result group0`,                  ~`result group1`,                  ~`OR or RR (95% CI)`,                                  ~`p-value`,
   "immediate_dwi incidence",  sprintf("%.1f%%", inc_g0),         sprintf("%.1f%%", inc_g1),         sprintf("OR %.2f (95%% CI %.2f–%.2f)", OR, OR_lo, OR_hi), sprintf("%.3f", p_lr),
@@ -419,3 +417,10 @@ table3 <- table3_raw |>
 
 # 출력
 table3
+
+cleaned_inversed_weighted %>%
+  group_by(group) %>%
+  summarise(
+    n_unweighted = n(),             # 실제 개체 수
+    n_weighted = sum(sw)            # 가중 후 pseudo-n
+  )
