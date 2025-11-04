@@ -12,7 +12,7 @@ library(cobalt)
 library(survey)
 library(pscl)
 
-raw <- readxl::read_excel("C:/Users/kangu/Desktop/Final/Final_1.1.1age.xlsx") |> janitor::clean_names()
+raw <- readxl::read_excel("Final_1.1.1age.xlsx") |> janitor::clean_names()
 
 names(raw)
 raw <- raw %>%
@@ -37,7 +37,7 @@ raw <- raw %>%
 
 vars <- c("procedure_time", "sex", "age" , "bmi", "htn", "dm", "dyslipidemia", "cva_hx",
           "fhx", "smoking_current", "alcohol", "anti_thrombotics_prev", "anti_plt_resistance",
-          "tx_location", "an_morphology", "multiplicity", "balloon_angioplasty", "adjuvant_coil", 
+          "tx_location", "an_morphology", "balloon_angioplasty", "adjuvant_coil", 
           "tirofiban", "immediate_dwi", "width", "dwi_count", "stent_no", 
           "stent_diameter", "stent_length")
 
@@ -247,7 +247,7 @@ uni_cont_res <- map_dfr(cont_vars2, ~ uni_cont(cleaned_inversed, .x))
 uni_cat_res  <- map_dfr(cat_vars2,  ~ uni_cat (cleaned_inversed, .x))
 
 #####multivariate logistic regression
-multi_vars <- c("smoking_current", "group", "sex", "tx_location")
+multi_vars <- c("smoking_current", "group", "sex", "tx_location", "procedure_time", "alcohol", "tirofiban", "htn", "adjuvant_coil")
 multi_model <- glm(
   formula = as.formula(paste("immediate_dwi ~ ", paste(multi_vars, collapse = "+"))),
   data = cleaned_inversed,
@@ -386,7 +386,7 @@ table2
 uni_all <- rbind(uni_cont_res, uni_cat_res) |> 
   arrange(p_value)
 
-multi_keep <- c("smoking_current","group","sex","tx_location")
+multi_keep <- c("smoking_current","group","sex","tx_location", "procedure_time", "alcohol", "tirofiban", "htn", "adjuvant_coil")
 
 multi_sum <- summary(multi_model)$coefficients
 multi_ci  <- confint(multi_model)
@@ -407,10 +407,10 @@ table3 <- table3_raw |>
   transmute(
     Variable,
     `Odds ratio (uni)`   = sprintf("%.2f", OR),
-    `95%% CI (uni)`      = sprintf("%.2f–%.2f", CI_low, CI_high),
+    `95%% CI (uni)`      = sprintf("%.2f - %.2f", CI_low, CI_high),
     `p value (uni)`      = sprintf("%.3f", p_value),
     `Odds ratio (multi)` = ifelse(is.na(OR_m), "", sprintf("%.2f", OR_m)),
-    `95%% CI (multi)`    = ifelse(is.na(CI_low_m), "", sprintf("%.2f–%.2f", CI_low_m, CI_high_m)),
+    `95%% CI (multi)`    = ifelse(is.na(CI_low_m), "", sprintf("%.2f - %.2f", CI_low_m, CI_high_m)),
     `p value (multi)`    = ifelse(is.na(p_value_m), "", sprintf("%.3f", p_value_m))
   ) |> 
   arrange(as.numeric(`p value (uni)`))
